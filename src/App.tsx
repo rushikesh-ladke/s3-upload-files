@@ -1,23 +1,37 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Button, Upload } from 'antd';
+import { Button, message, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import { handleUpload } from './s3-upload';
+import { config } from './s3-upload';
+import { v4 as uuidv4 } from 'uuid';
+import ReactS3Client from 'react-aws-s3-typescript';
 
 function App() {
 
-  const props : any = {
-    listType: 'picture',
-    async previewFile (file : any) {
-      console.log('Your upload file:', file);
-      // Your process logic. Here we just mock to the same file
-      await handleUpload(file)
-      .then((res : any) => console.log(res))
-      .catch((err : any) => console.log(err))
-    },
+  const success = (url : any) => {
+    message.success({
+      content: <div><span>{url}</span> <br/><a href={url} target="_blank" rel="noopener noreferrer">Here is the Link</a></div>,
+      className: 'custom-class',
+      style: {
+        marginTop: '20vh',
+      },
+    });
   };
+
+  const upload= (file: any ) => {
+    const s3 = new ReactS3Client(config);
+
+    s3.uploadFile(file.file, uuidv4())
+    .then((res : any) => {
+      console.log(res)
+      success(res.location)
+    })
+    .catch((err : any) => message.error(err))
+  }
   return <div className='App'>
-      <Upload {...props}>
+      <Upload maxCount={1} customRequest={upload} showUploadList={false}
+
+>
     <Button icon={<UploadOutlined />}>Upload</Button>
   </Upload>
   </div>;
