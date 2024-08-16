@@ -12,4 +12,5 @@ body {
   align-items: center;
   height: 100vh;
   border: 5rem solid bisque;
+  background-color: white;
 }

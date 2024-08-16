@@ -23,7 +23,6 @@ function App() {
 
     s3.uploadFile(file.file, uuidv4())
     .then((res : any) => {
-      console.log(res)
       success(res.location)
     })
     .catch((err : any) => message.error(err))
